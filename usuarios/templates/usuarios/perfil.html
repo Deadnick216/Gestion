@@ -1,0 +1,28 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Perfil de Usuario{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2>Perfil de Usuario</h2>
+        <form method="post" action="{% url 'perfil_usuario' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Nombre de usuario</label>
+                <input type="text" class="form-control" id="username" value="{{ user.username }}" readonly>
+            </div>
+            <div class="form-group mt-2">
+                <label for="email">Correo electrónico</label>
+                <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+            </div>
+            <div class="form-group mt-2">
+                <label for="rol">Rol</label>
+                <input type="text" class="form-control" id="rol" value="{{ user.rol }}" readonly>
+            </div>
+            <div class="form-group mt-2">
+                <label for="bio">Biografía</label>
+                <textarea class="form-control" id="bio" readonly>{{ user.bio }}</textarea>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

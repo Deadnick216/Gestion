@@ -1,0 +1,16 @@
+{% extends "usuarios/base.html" %}
+{% block title %}Inicio | Gestión de Alojamientos{% endblock %}
+{% block content %}
+<div class="jumbotron">
+    <h1 class="display-4">Bienvenido a la Plataforma de Gestión de Alojamientos</h1>
+    <p class="lead">Aquí puedes buscar, reservar y administrar propiedades o gestionar tus anuncios como anfitrión.</p>
+    <hr class="my-4">
+    <p>Para comenzar, inicia sesión o regístrate.</p>
+    {% if not user.is_authenticated %}
+        <a class="btn btn-primary btn-lg" href="{% url 'login' %}" role="button">Iniciar Sesión</a>
+        <a class="btn btn-secondary btn-lg" href="{% url 'register' %}" role="button">Registrarse</a>
+    {% else %}
+        <a class="btn btn-success btn-lg" href="{% url 'perfil_usuario' %}" role="button">Ver Perfil</a>
+    {% endif %}
+</div>
+{% endblock %}
