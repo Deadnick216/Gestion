@@ -22,7 +22,7 @@ def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
@@ -30,9 +30,13 @@ def register(request):
             messages.success(request, 'Cuenta creada exitosamente.')
             return redirect('perfil_usuario')
         else:
+            # Limpiar errores en el campo 'rol'
+            if 'rol' in form.errors:
+                form.errors['rol'] = form.errors['rol']  # Esto debería ayudar a evitar que el error se persista
             messages.error(request, 'Por favor corrija los errores a continuación.')
     else:
         form = CustomUserCreationForm()
+    
     return render(request, 'usuarios/register.html', {'form': form})
 
 def login_view(request):
@@ -51,6 +55,34 @@ def login_view(request):
 @login_required
 def perfil(request):
     return render(request, 'usuarios/perfil.html')
+
+@login_required
+def perfil_usuario(request):
+    user = request.user
+
+    if request.method == 'POST':
+        # Actualizar campos editables
+        nueva_bio = request.POST.get('bio')
+        nuevo_rol = request.POST.get('rol')
+
+        # Actualizar biografía
+        if nueva_bio is not None:
+            user.bio = nueva_bio
+        
+        # Validar y actualizar el rol
+        if nuevo_rol in dict(Usuario.ROLES):
+            user.rol = nuevo_rol
+        else:
+            messages.error(request, "El rol seleccionado no es válido.")
+            return redirect('perfil_usuario')
+
+        # Guardar los cambios
+        user.save()
+        messages.success(request, "Tu perfil ha sido actualizado correctamente.")
+        return redirect('perfil_usuario')
+
+    return render(request, 'usuarios/perfil_usuario.html', {'user': user})
+
 
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
